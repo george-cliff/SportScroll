@@ -1,0 +1,31 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+env/
+
+# IDE / editor
+.vscode/
+.idea/
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-specific
+.cache/
+output/
+*.log
+DEVLOG.md
+ROADMAP.md
+CLAUDE.md
+
+# Distribution
+build/
+dist/
+*.egg-info/

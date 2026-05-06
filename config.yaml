@@ -1,0 +1,46 @@
+
+### User Infomation ###
+# edit these to suit your country and timezone
+
+timezone: Europe/London # follows tz database
+tv_region: United Kingdom #follows the way the country appears in thesportsdb json
+cache_ttl_mins: 60
+
+### API settings ###
+# only need to be editied if you are a preimum user
+premium: false #change to true if you have premium for "thesportsdb"
+key: 123 #The current free "thesportsdb" API key is: 123, replace if you have a premium key
+tv_lookup: false
+
+
+### Sports ###
+# fully supported sports, you can add your own sports just match them to the format below
+# in this current version only football is supported
+
+sports:
+  Motorsports:
+    f1:
+      name: "Formula 1" #quoted for robustness
+      league_id: 4370
+      enabled: false
+  Football:
+    pl:
+      name: "Premier League"
+      league_id: 4328
+      enabled: true
+    gb:
+      name: "German Bundesliga"
+      league_id: 4331
+      enabled: true
+    cl:
+      name: "UEFA Champions League"
+      league_id: 4480
+      enabled: true
+  Tennis:
+    atp:
+      name: "ATP World Tour"
+      league_id: 4464
+      enabled: false
+
+
+

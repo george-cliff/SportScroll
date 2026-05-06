@@ -1,0 +1,44 @@
+# Standard library Imports
+
+# Related third party imports
+import requests
+
+# Local application/library specific imports
+from src.config import load_config
+
+BASE_URL = "https://www.thesportsdb.com/api/v1/json"
+PREM_URL = "https://www.thesportsdb.com/api/v2/json"
+
+config = load_config()
+
+def get_url():
+    """returns the URL depending if the user has toggled premium in config"""
+    if config["premium"]:
+        url = f"{PREM_URL}/{config['key']}"
+    else:
+        url = f"{BASE_URL}/{config['key']}"
+    return url
+
+def get_events_on_date(league_id, event_date):
+    """calls the api to get the event details as a json and returns that json"""
+    url = f"{get_url()}/eventsday.php"
+    response = requests.get(url, params={"d": event_date.strftime("%Y-%m-%d"), "l": league_id}, timeout = 10)
+    if not response.text:
+        return []
+    events = response.json().get("events") or []
+    return events
+
+def get_tv(event_id):
+    """planned: uses the timezone in config to get TV stations showing the event, returns a list of tv stations or unknown (WIP — not yet wired into the PDF pipeline."""
+    url = f"{get_url()}/lookuptv.php"
+    response = requests.get(url, params={"id": event_id}, timeout = 10)
+    channels = response.json().get("tvevent") or []
+    region = config["tv_region"]
+    channel_list = [] # handles cases where multiple channels are showing the same event
+    for c in channels:
+        if c.get("strCountry", "").lower() == region.lower():
+            channel_list.append(c["strChannel"])
+    if channel_list:
+        return ", ".join(channel_list)
+    else:
+        return "unknown"
