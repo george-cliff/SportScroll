@@ -85,7 +85,7 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 
 **Features**
 
-- Multi-sport support
+- Multi-sport support, currently only supports football
 - Wire TV channel lookup into the PDF output
 - Improve PDF formatting and visual polish
 - Add cache cleanup so old `.json` files don't accumulate in `.cache/`
