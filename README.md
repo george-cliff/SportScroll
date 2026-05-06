@@ -26,7 +26,7 @@ Each morning I found myself reaching for my phone and scrolling through multiple
 
 1. Clone the Repo
 2. Install Python (3.14.3)
-3. Install WeasyPrint system dependencies — [see installation guide](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html)
+3. Install WeasyPrint system dependencies -- [see installation guide](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html)
 4. `pip install -r requirements.txt`
 
 ## Project Structure
@@ -74,22 +74,28 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 
 ## Roadmap
 
-These are not currently ordered and more reflects features and ideas I've had and will likely be adding as the project continues
+**Code improvements**
 
-- Wire up `main.py` as the proper entry point
-- Multi Sport Support
-- Integrate TV channel lookup into the PDF output
-- Improve formatting for PDF to make it `pretty`
+- Untangle the spaghetti
+- Centralise config and timezone loading to avoid reading `config.yaml`
+- Tidy `cache.py`
+- Date parameter consistency across all modules
+- Refactor HTML generation in `pdf.py` to remove repeated loop nests and inline styles
+- Replace hardcoded values with named constants
+
+**Features**
+
+- Multi-sport support
+- Wire TV channel lookup into the PDF output
+- Improve PDF formatting and visual polish
 - Add cache cleanup so old `.json` files don't accumulate in `.cache/`
-- Add favourite teams config and highlighting in the PDF
-- Add venue name and country flag to event display
-    - Potential to Add weather display
-- Add event importance tiers per sport (e.g. F1 Race is higher importance, Practice lower importance)
-- Add sport-specific layouts (league tables, championship standings)
-    - Add league tables on a configured day of the week only
-- Add logging
-- Add CLI menu for configuration without editing config.yaml
-- Add cron job support with auto-print option each morning
+- Favourite teams config and PDF highlighting
+- Venue name and country flag per event and possibly weather
+- Event importance tiers per sport (e.g. F1 Race vs Practice)
+- Sport-specific layouts (league tables, championship standings)
+- Logging
+- CLI menu for configuration without editing `config.yaml`
+- Cron job support with auto-print each morning
 
 
 ## Contributing
