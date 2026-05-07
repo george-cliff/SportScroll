@@ -18,4 +18,4 @@ def get_timezone():
     return ZoneInfo(load_config()["timezone"])
 
 if __name__ == "__main__":
-    load_config()
+    print(load_config())

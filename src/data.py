@@ -46,7 +46,7 @@ def get_pdf_data():
     today_data = latest_data[str(pdf_date.date())]
     upcoming_data = {}
     for i in range(1, LOOKAHEAD_DAYS + 1):
-        target_date = pdf_date +  timedelta(days=i)
+        target_date = pdf_date + timedelta(days=i)
         upcoming_data[str(target_date.date())] = latest_data[str(target_date.date())]
 
     pdf_data = {

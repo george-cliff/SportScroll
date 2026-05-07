@@ -1,9 +1,10 @@
 # Standard library Imports
 from datetime import timedelta, datetime
 from pathlib import Path
+import json
 
 # Related third party imports
-import json
+
 
 # Local application/library specific imports
 from src.config import load_config, get_timezone

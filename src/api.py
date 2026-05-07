@@ -29,7 +29,7 @@ def get_events_on_date(league_id, target_date):
     return events
 
 def get_tv(event_id):
-    """planned: uses the timezone in config to get TV stations showing the event, returns a list of tv stations or unknown (WIP — not yet wired into the PDF pipeline."""
+    """planned: uses the timezone in config to get TV stations showing the event, returns a list of tv stations or unknown (WIP — not yet wired into the PDF pipeline.)"""
     url = f"{get_url()}/lookuptv.php"
     response = requests.get(url, params={"id": event_id}, timeout = REQUEST_TIMEOUT)
     channels = response.json().get("tvevent") or []
