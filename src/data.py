@@ -8,7 +8,7 @@ import json
 
 # Local application/library specific imports
 from src.config import load_config
-from src.api import get_events_on_date, get_tv
+from src.api import get_events_on_date
 from src.cache import load_cache, save_cache, cache_valid
 
 config = load_config()
@@ -28,15 +28,15 @@ def get_events(target_date):
     return raw_events
 
 def get_latest_data(target_date):
-    """Checks if there is a valid cached json, and loads the data from that, if not valid calls get_events for 5 days (yesterday -> 3 days ahead) and saves to cache, returns a json of raw event data"""
+    """takes in a date object, Checks if there is a valid cached json, and loads the data from that, if not valid calls get_events for 5 days (yesterday -> 3 days ahead) and saves to cache, returns a json of raw event data"""
     valid = cache_valid()
     if valid:
         raw_events = load_cache()
-    if not valid:
+    else:
         raw_events = {}
         for i in range(-1, 4):
             fetch_date = target_date + timedelta(days=i)
-            raw_events[str(fetch_date.date())] = get_events(target_date=fetch_date)
+            raw_events[fetch_date.strftime("%Y-%m-%d")] = get_events(target_date=fetch_date)
         save_cache(raw_events)
     return raw_events
 
