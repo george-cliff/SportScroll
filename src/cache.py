@@ -26,7 +26,7 @@ def save_cache(data):
     """Writes a json to .cache which contains the API information to prevent hitting rate limits.
     
     Args:
-        data: A dict which contains event data from the API
+        data: A dict which contains event data from the API.
     """
     timestamp = datetime.now(get_timezone()).strftime(CACHE_TIMESTAMP)
     CACHE_DIR.mkdir(exist_ok=True)
@@ -39,7 +39,7 @@ def cache_valid():
     """Checks if there is a file in the cache and it is within the TTL.
     
     Returns:
-        True if the cache can be used, False if there is no cache or it has expired
+        True if the cache can be used, False if there is no cache or it has expired.
     """
     latest_file = _get_latest_cache_file()
     if latest_file is None:
@@ -57,7 +57,7 @@ def load_cache():
     """Loads and returns the most recent json from .cache, or None if no cache exists.
     
     Returns:
-        A dict containing cached event information
+        A dict containing cached event information.
     """
     latest_file = _get_latest_cache_file()
     if latest_file is None:

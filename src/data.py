@@ -31,7 +31,7 @@ def _get_events(target_date):
     raw_events = {}
     for category, leagues in load_config()["sports"].items():
         raw_events[category] = {}
-        for key, league in leagues.items():
+        for _, league in leagues.items():
             if league["enabled"]: 
                 events = get_events_on_date(league_id=league["league_id"], target_date=target_date)
                 if events:
@@ -43,7 +43,7 @@ def get_latest_data(target_date=None):
     """Returns a full 5-day window of event data, using the cache if valid.
 
     Args:
-        target_date: The centre date for the fetch window. Defaults to now if not provided.
+        target_date: a date object for the fetch window. Defaults to now if not provided.
 
     Returns:
         A dict keyed by ISO date string, each value being a dict of categories and leagues.
@@ -86,5 +86,4 @@ def get_pdf_data():
 
 
 if __name__ == "__main__":
-    raw_events = get_latest_data(date.today())
-    print(json.dumps(raw_events, indent=4))
+    raw_events = get_latest_data(datetime(2026, 5, 3))

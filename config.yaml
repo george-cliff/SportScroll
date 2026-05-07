@@ -1,5 +1,5 @@
 
-### User Infomation ###
+### User Information ###
 # edit these to suit your country and timezone
 
 timezone: Europe/London # follows tz database
@@ -7,7 +7,7 @@ tv_region: United Kingdom #follows the way the country appears in thesportsdb js
 cache_ttl_mins: 60
 
 ### API settings ###
-# only need to be editied if you are a preimum user
+# only need to be editied if you are a premium user
 premium: false #change to true if you have premium for "thesportsdb"
 key: 123 #The current free "thesportsdb" API key is: 123, replace if you have a premium key
 tv_lookup: false
@@ -36,11 +36,6 @@ sports:
       name: "UEFA Champions League"
       league_id: 4480
       enabled: true
-  Tennis:
-    atp:
-      name: "ATP World Tour"
-      league_id: 4464
-      enabled: false
 
 
 

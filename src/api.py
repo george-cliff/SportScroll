@@ -38,7 +38,7 @@ def get_events_on_date(league_id, target_date):
         A list of event dicts or an empty list if no events were found.
     """
     url = f"{_get_url()}/eventsday.php"
-    response = requests.get(url, params={"d": target_date.strftime("%Y-%m-%d"), "l": league_id}, timeout = REQUEST_TIMEOUT)
+    response = requests.get(url, params={"d": target_date.strftime("%Y-%m-%d"), "l": league_id}, timeout=REQUEST_TIMEOUT)
     if not response.text:
         return []
     events = response.json().get("events") or []

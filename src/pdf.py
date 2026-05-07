@@ -5,7 +5,7 @@ file in the output/ directory via WeasyPrint.
 """
 
 # Standard library Imports
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Related third party imports
@@ -56,7 +56,7 @@ def generate_html(data):
 
     html += "<h2>Upcoming Events</h2>"
     upcoming_events = []
-    for upcoming_date, day_data in data["upcoming"].items():
+    for _, day_data in data["upcoming"].items():
         for category, leagues in day_data.items():
             for league_name, events in leagues.items():
                 for event in events:
