@@ -13,11 +13,8 @@ REQUEST_TIMEOUT = 10
 
 def get_url():
     """returns the URL depending if the user has toggled premium in config"""
-    if load_config()["premium"]:
-        url = f"{PREM_URL}/{load_config()['key']}"
-    else:
-        url = f"{BASE_URL}/{load_config()['key']}"
-    return url
+    url = PREM_URL if load_config()["premium"] else BASE_URL
+    return f"{url}/{load_config()['key']}"
 
 def get_events_on_date(league_id, target_date):
     """calls the api to get the event details as a json and returns that json"""

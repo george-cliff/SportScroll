@@ -23,12 +23,11 @@ def save_cache(data):
 
 def cache_valid():
     """Returns False if no cache exists or if the cache has expired past the configured TTL."""
-    latest = _get_latest_cache_file()
-    if latest is None:
+    latest_file = _get_latest_cache_file()
+    if latest_file is None:
         return False
-    latest = latest.stem
-    latest = latest.removeprefix("events-")
-    cache_time = datetime.strptime(latest, CACHE_TIMESTAMP).replace(tzinfo=get_timezone())
+    cache_str = latest_file.stem.removeprefix("events-")
+    cache_time = datetime.strptime(cache_str, CACHE_TIMESTAMP).replace(tzinfo=get_timezone())
     timestamp = datetime.now(get_timezone())
     if timestamp > cache_time + timedelta(minutes=load_config()["cache_ttl_mins"]):
         return False
@@ -37,10 +36,10 @@ def cache_valid():
 
 def load_cache():
     """loads and returns the most recent json from .cache, or None if no cache exists"""
-    latest = _get_latest_cache_file()
-    if latest is None:
+    latest_file = _get_latest_cache_file()
+    if latest_file is None:
         return None
-    with open(latest) as f:
+    with open(latest_file) as f:
         return json.load(f)
 
 def _get_latest_cache_file():

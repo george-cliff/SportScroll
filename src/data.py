@@ -42,12 +42,12 @@ def get_pdf_data():
     """slices the 5 day data into yesterday, today, and upcoming sections ready for the pdf and returns the dict"""
     pdf_date = datetime.now(get_timezone())
     latest_data = get_latest_data(pdf_date)
-    yesterday_data = latest_data[str((pdf_date - timedelta(days=LOOKBACK_DAYS)).date())]
-    today_data = latest_data[str(pdf_date.date())]
+    yesterday_data = latest_data[(pdf_date - timedelta(days=LOOKBACK_DAYS)).strftime(DATE_FORMAT)]
+    today_data = latest_data[pdf_date.strftime(DATE_FORMAT)]
     upcoming_data = {}
     for i in range(1, LOOKAHEAD_DAYS + 1):
         target_date = pdf_date + timedelta(days=i)
-        upcoming_data[str(target_date.date())] = latest_data[str(target_date.date())]
+        upcoming_data[target_date.strftime(DATE_FORMAT)] = latest_data[target_date.strftime(DATE_FORMAT)]
 
     pdf_data = {
         "yesterday": yesterday_data,
