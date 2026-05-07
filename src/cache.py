@@ -1,7 +1,15 @@
+"""Cache manager for SportScroll.
+
+Reads and writes a timestamped JSON file in .cache/ so the API is only
+hit once per configured TTL window.
+"""
+
+
 # Standard library Imports
 from datetime import timedelta, datetime
-from pathlib import Path
 import json
+from pathlib import Path
+
 
 # Related third party imports
 
@@ -13,16 +21,26 @@ CACHE_DIR = Path(".cache")
 CACHE_GLOB = "events-*.json"
 CACHE_TIMESTAMP = "%Y%m%dT%H%M%SZ"
 
+
 def save_cache(data):
-    """writes a json to .cache which contains the api information to prevent hitting rate limits"""
+    """Writes a json to .cache which contains the API information to prevent hitting rate limits.
+    
+    Args:
+        data: A dict which contains event data from the API
+    """
     timestamp = datetime.now(get_timezone()).strftime(CACHE_TIMESTAMP)
     CACHE_DIR.mkdir(exist_ok=True)
     file_path = CACHE_DIR / f"events-{timestamp}.json"
     with open(file_path, "w") as f:
         json.dump(data, f, indent=4)
 
+
 def cache_valid():
-    """Returns False if no cache exists or if the cache has expired past the configured TTL."""
+    """Checks if there is a file in the cache and it is within the TTL.
+    
+    Returns:
+        True if the cache can be used, False if there is no cache or it has expired
+    """
     latest_file = _get_latest_cache_file()
     if latest_file is None:
         return False
@@ -34,14 +52,21 @@ def cache_valid():
 
     return True
 
+
 def load_cache():
-    """loads and returns the most recent json from .cache, or None if no cache exists"""
+    """Loads and returns the most recent json from .cache, or None if no cache exists.
+    
+    Returns:
+        A dict containing cached event information
+    """
     latest_file = _get_latest_cache_file()
     if latest_file is None:
         return None
     with open(latest_file) as f:
         return json.load(f)
 
+
 def _get_latest_cache_file():
+    """Sorts through CACHE_DIR and returns the most recently created file."""
     files = sorted(CACHE_DIR.glob(CACHE_GLOB))
     return files[-1] if files else None

@@ -1,21 +1,43 @@
-import yaml
+"""Config loader for SportScroll.
+
+Reads config.yaml once on first call and caches the result for the
+lifetime of the process.
+"""
+
+# Standard library Imports
 from functools import lru_cache
 from zoneinfo import ZoneInfo
+
+# Related third party imports
+import yaml
+
+# Local application/library specific imports
+
 
 CONFIG_FILE = "config.yaml"
 
 
 @lru_cache(maxsize=1)
 def load_config():
-    """loads and returns the config file"""
+    """Loads and returns the contents of config.yaml.
+
+    Returns:
+        A dict of the full config file contents.
+    """
     with open(CONFIG_FILE, "r") as f:
         config = yaml.safe_load(f)
     return config
 
+
 @lru_cache(maxsize=1)
 def get_timezone():
-    """returns the configured timezone as a ZoneInfo object"""
+    """Returns the configured timezone as a ZoneInfo object.
+
+    Returns:
+        A ZoneInfo instance for the timezone string in config.yaml.
+    """
     return ZoneInfo(load_config()["timezone"])
+
 
 if __name__ == "__main__":
     print(load_config())
