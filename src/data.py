@@ -9,6 +9,10 @@ from src.config import load_config, get_timezone
 from src.api import get_events_on_date
 from src.cache import load_cache, save_cache, cache_valid
 
+LOOKBACK_DAYS = 1
+LOOKAHEAD_DAYS = 3
+DATE_FORMAT = "%Y-%m-%d"
+
 def get_events(target_date):
     """returns a dict of raw events from the api for a target date, grouped by sport"""
     raw_events = {}
@@ -16,7 +20,7 @@ def get_events(target_date):
         raw_events[category] = {}
         for key, league in leagues.items():
             if league["enabled"]: 
-                events = get_events_on_date(league_id=league["league_id"], event_date=target_date)
+                events = get_events_on_date(league_id=league["league_id"], target_date=target_date)
                 if events:
                     raw_events[category][league['name']] = events
     return raw_events
@@ -28,9 +32,9 @@ def get_latest_data(target_date):
         raw_events = load_cache()
     else:
         raw_events = {}
-        for i in range(-1, 4):
+        for i in range(-LOOKBACK_DAYS, LOOKAHEAD_DAYS + 1):
             fetch_date = target_date + timedelta(days=i)
-            raw_events[fetch_date.strftime("%Y-%m-%d")] = get_events(target_date=fetch_date)
+            raw_events[fetch_date.strftime(DATE_FORMAT)] = get_events(target_date=fetch_date)
         save_cache(raw_events)
     return raw_events
 
@@ -38,10 +42,10 @@ def get_pdf_data():
     """slices the 5 day data into yesterday, today, and upcoming sections ready for the pdf and returns the dict"""
     pdf_date = datetime.now(get_timezone())
     latest_data = get_latest_data(pdf_date)
-    yesterday_data = latest_data[str((pdf_date - timedelta(days=1)).date())]
+    yesterday_data = latest_data[str((pdf_date - timedelta(days=LOOKBACK_DAYS)).date())]
     today_data = latest_data[str(pdf_date.date())]
     upcoming_data = {}
-    for i in range(1, 4):
+    for i in range(1, LOOKAHEAD_DAYS + 1):
         target_date = pdf_date +  timedelta(days=i)
         upcoming_data[str(target_date.date())] = latest_data[str(target_date.date())]
 

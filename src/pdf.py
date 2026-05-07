@@ -8,6 +8,10 @@ from weasyprint import HTML
 # Local application/library specific imports
 from src.config import get_timezone
 
+MAX_UPCOMING = 10
+OUTPUT_DIR = Path("output")
+UTC_TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
+TIME_FORMAT = "%H:%M"
 
 def generate_html(data):
     """takes in the data dict, returns an HTML string"""
@@ -35,7 +39,7 @@ def generate_html(data):
         for league_name, events in leagues.items():
             html += f"<h4>{league_name}</h4>"
             for event in events:
-                start_time = datetime.strptime(event["strTimestamp"], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).astimezone(get_timezone()).strftime("%H:%M")
+                start_time = datetime.strptime(event["strTimestamp"], UTC_TIMESTAMP_FORMAT).replace(tzinfo=timezone.utc).astimezone(get_timezone()).strftime(TIME_FORMAT)
                 html += f'<p>{event["strHomeTeam"]} <img src="{event["strHomeTeamBadge"]}" style="width:30px; height:30px;"> Vs. <img src="{event["strAwayTeamBadge"]}" style="width:30px; height:30px;"> {event["strAwayTeam"]} </p>'
                 html += f'<p style="font-size:0.8em; color:grey; margin-top:-10px;">{start_time}</p>'
 
@@ -47,12 +51,12 @@ def generate_html(data):
             for league_name, events in leagues.items():
                 for event in events:
                     upcoming_events.append(event)
-    upcoming_events = sorted(upcoming_events, key=lambda e: e["strTimestamp"])[:10]
+    upcoming_events = sorted(upcoming_events, key=lambda e: e["strTimestamp"])[:MAX_UPCOMING]
     if not upcoming_events:
         html += "<p>No events</p>"
     else:
         for event in upcoming_events:
-            start_time = datetime.strptime(event["strTimestamp"], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).astimezone(get_timezone()).strftime("%H:%M")
+            start_time = datetime.strptime(event["strTimestamp"], UTC_TIMESTAMP_FORMAT).replace(tzinfo=timezone.utc).astimezone(get_timezone()).strftime(TIME_FORMAT)
             html += f'<p>{event["strHomeTeam"]} Vs. {event["strAwayTeam"]}</p>'
             html += f'<p style="font-size:0.8em; color:grey; margin-top:-10px;">{event["dateEvent"]} @ {start_time}</p>'
 
@@ -64,7 +68,7 @@ def generate_html(data):
 def generate_pdf(pdf_data):
     """renders HTML into a PDF in the folder output/"""
     datestamp = datetime.now(get_timezone()).strftime("%Y-%m-%d")
-    Path("output").mkdir(exist_ok=True)
+    OUTPUT_DIR.mkdir(exist_ok=True)
     pdf_file = "output/SportScroll_" + datestamp + ".pdf"
     html = generate_html(data=pdf_data)
     HTML(string=html).write_pdf(pdf_file)

@@ -9,6 +9,8 @@ from src.config import load_config
 BASE_URL = "https://www.thesportsdb.com/api/v1/json"
 PREM_URL = "https://www.thesportsdb.com/api/v2/json"
 
+REQUEST_TIMEOUT = 10
+
 def get_url():
     """returns the URL depending if the user has toggled premium in config"""
     if load_config()["premium"]:
@@ -17,10 +19,10 @@ def get_url():
         url = f"{BASE_URL}/{load_config()['key']}"
     return url
 
-def get_events_on_date(league_id, event_date):
+def get_events_on_date(league_id, target_date):
     """calls the api to get the event details as a json and returns that json"""
     url = f"{get_url()}/eventsday.php"
-    response = requests.get(url, params={"d": event_date.strftime("%Y-%m-%d"), "l": league_id}, timeout = 10)
+    response = requests.get(url, params={"d": target_date.strftime("%Y-%m-%d"), "l": league_id}, timeout = REQUEST_TIMEOUT)
     if not response.text:
         return []
     events = response.json().get("events") or []
@@ -29,7 +31,7 @@ def get_events_on_date(league_id, event_date):
 def get_tv(event_id):
     """planned: uses the timezone in config to get TV stations showing the event, returns a list of tv stations or unknown (WIP — not yet wired into the PDF pipeline."""
     url = f"{get_url()}/lookuptv.php"
-    response = requests.get(url, params={"id": event_id}, timeout = 10)
+    response = requests.get(url, params={"id": event_id}, timeout = REQUEST_TIMEOUT)
     channels = response.json().get("tvevent") or []
     region = load_config()["tv_region"]
     channel_list = [] # handles cases where multiple channels are showing the same event
