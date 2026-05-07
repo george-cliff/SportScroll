@@ -33,18 +33,18 @@ Each morning I found myself reaching for my phone and scrolling through multiple
 
 ```
 sportscroll/
-├── main.py              — entry point
-├── config.yaml          — user configuration
+├── main.py              # entry point
+├── config.yaml          # user configuration
 ├── requirements.txt
 ├── assets/
 │   ├── example_output.png
 │   └── example_output.pdf
 └── src/
-    ├── api.py           — TheSportsDB API client
-    ├── cache.py         — cache read/write/validation
-    ├── config.py        — config loader
-    ├── data.py          — data fetching and orchestration
-    └── pdf.py           — HTML generation and PDF rendering
+    ├── api.py           # TheSportsDB API client
+    ├── cache.py         # cache read/write/validation
+    ├── config.py        # config loader
+    ├── data.py          # data fetching and orchestration
+    └── pdf.py           # HTML generation and PDF rendering
 ```
 
 ## Configuration
@@ -58,7 +58,7 @@ All configuration is in `config.yaml` in the project root.
 | `cache_ttl_mins` | How long cached data is considered fresh (in minutes) | `60` |
 | `premium` | Set to `true` if you have a TheSportsDB premium key | `false` |
 | `key` | Your TheSportsDB API key — `123` is the public free key | `123` |
-| `tv_lookup` | Enable TV channel lookup | `false` |
+| `tv_lookup` | Enable TV channel lookup (currently does not work) | `false` |
 
 To enable or disable a sport, set `enabled: true` or `enabled: false` under the relevant league in the `sports` section.
 
@@ -66,6 +66,7 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 
 1. edit `config.yaml` to your preferences and timezone
 2. run `main.py`
+3. check `output/` for your *SportScroll PDF*
 
 ## Examples
 
@@ -76,19 +77,19 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 
 **Code improvements**
 
-- untangle the spaghetti
-- Small code review fixes — unused imports, PEP 8 nits, missing docstring periods
-- Refactor HTML generation in `pdf.py` — extract sport-specific renderers so adding a new sport only requires a new function
+- Untangle the spaghetti
+- Small code review fixes
+- Refactor HTML generation in `pdf.py`, setting it up for multi-sport support
 
 **Features**
 
-- Multi-sport support — the data layer already groups by category, just needs sport-specific renderers
+- Multi-sport support with sport specific layouts
 - Wire TV channel lookup into the PDF output
 - Improve PDF formatting and visual polish
 - Add cache cleanup so old `.json` files don't accumulate in `.cache/`
 - Favourite teams config and PDF highlighting
 - Venue name and country flag per event, possibly weather
-- Sport-specific layouts (league tables, championship standings)
+- Sport-specific layouts for feature days (Championship standings after an f1 Weekend)
 - Logging
 - CLI menu for configuration without editing `config.yaml`
 - Cron job support with auto-print each morning
