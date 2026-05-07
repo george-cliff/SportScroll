@@ -76,22 +76,18 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 
 **Code improvements**
 
-- Untangle the spaghetti
-- Centralise config and timezone loading to avoid reading `config.yaml`
-- Tidy `cache.py`
-- Date parameter consistency across all modules
-- Refactor HTML generation in `pdf.py` to remove repeated loop nests and inline styles
-- Replace hardcoded values with named constants
+- untangle the spaghetti
+- Small code review fixes — unused imports, PEP 8 nits, missing docstring periods
+- Refactor HTML generation in `pdf.py` — extract sport-specific renderers so adding a new sport only requires a new function
 
 **Features**
 
-- Multi-sport support, currently only supports football
+- Multi-sport support — the data layer already groups by category, just needs sport-specific renderers
 - Wire TV channel lookup into the PDF output
 - Improve PDF formatting and visual polish
 - Add cache cleanup so old `.json` files don't accumulate in `.cache/`
 - Favourite teams config and PDF highlighting
-- Venue name and country flag per event and possibly weather
-- Event importance tiers per sport (e.g. F1 Race vs Practice)
+- Venue name and country flag per event, possibly weather
 - Sport-specific layouts (league tables, championship standings)
 - Logging
 - CLI menu for configuration without editing `config.yaml`
