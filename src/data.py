@@ -1,24 +1,18 @@
 # Standard library Imports
 from datetime import date, timedelta, datetime
-from zoneinfo import ZoneInfo
 import json
 
 # Related third party imports
 
-
 # Local application/library specific imports
-from src.config import load_config
+from src.config import load_config, get_timezone
 from src.api import get_events_on_date
 from src.cache import load_cache, save_cache, cache_valid
-
-config = load_config()
-tz = ZoneInfo(config["timezone"])
-
 
 def get_events(target_date):
     """returns a dict of raw events from the api for a target date, grouped by sport"""
     raw_events = {}
-    for category, leagues in config["sports"].items():
+    for category, leagues in load_config()["sports"].items():
         raw_events[category] = {}
         for key, league in leagues.items():
             if league["enabled"]: 
@@ -42,7 +36,7 @@ def get_latest_data(target_date):
 
 def get_pdf_data():
     """slices the 5 day data into yesterday, today, and upcoming sections ready for the pdf and returns the dict"""
-    pdf_date = datetime.now(tz)
+    pdf_date = datetime.now(get_timezone())
     latest_data = get_latest_data(pdf_date)
     yesterday_data = latest_data[str((pdf_date - timedelta(days=1)).date())]
     today_data = latest_data[str(pdf_date.date())]

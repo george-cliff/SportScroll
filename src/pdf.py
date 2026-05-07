@@ -1,23 +1,19 @@
 # Standard library Imports
 from datetime import datetime, timedelta, timezone
-from zoneinfo import ZoneInfo
 from pathlib import Path
 
 # Related third party imports
 from weasyprint import HTML
 
 # Local application/library specific imports
-from src.config import load_config
-from src.data import get_pdf_data
+from src.config import get_timezone
 
-config = load_config()
-tz = ZoneInfo(config["timezone"])
 
 def generate_html(data):
     """takes in the data dict, returns an HTML string"""
     # TITLE
     html = '<html><body style="text-align:center;">'
-    date_now = datetime.now(tz)
+    date_now = datetime.now(get_timezone())
     display_date= (f"{date_now:%a} {date_now.day} {date_now:%b %Y}")
     html += f"<h1>The Sport Scroll - {display_date}</h1>"
 
@@ -39,7 +35,7 @@ def generate_html(data):
         for league_name, events in leagues.items():
             html += f"<h4>{league_name}</h4>"
             for event in events:
-                start_time = datetime.strptime(event["strTimestamp"], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).astimezone(tz).strftime("%H:%M")
+                start_time = datetime.strptime(event["strTimestamp"], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).astimezone(get_timezone()).strftime("%H:%M")
                 html += f'<p>{event["strHomeTeam"]} <img src="{event["strHomeTeamBadge"]}" style="width:30px; height:30px;"> Vs. <img src="{event["strAwayTeamBadge"]}" style="width:30px; height:30px;"> {event["strAwayTeam"]} </p>'
                 html += f'<p style="font-size:0.8em; color:grey; margin-top:-10px;">{start_time}</p>'
 
@@ -56,7 +52,7 @@ def generate_html(data):
         html += "<p>No events</p>"
     else:
         for event in upcoming_events:
-            start_time = datetime.strptime(event["strTimestamp"], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).astimezone(tz).strftime("%H:%M")
+            start_time = datetime.strptime(event["strTimestamp"], "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc).astimezone(get_timezone()).strftime("%H:%M")
             html += f'<p>{event["strHomeTeam"]} Vs. {event["strAwayTeam"]}</p>'
             html += f'<p style="font-size:0.8em; color:grey; margin-top:-10px;">{event["dateEvent"]} @ {start_time}</p>'
 
@@ -65,12 +61,11 @@ def generate_html(data):
     html += '</body></html>'
     return html
 
-def generate_pdf():
+def generate_pdf(pdf_data):
     """renders HTML into a PDF in the folder output/"""
-    datestamp = datetime.now(tz).strftime("%Y-%m-%d")
+    datestamp = datetime.now(get_timezone()).strftime("%Y-%m-%d")
     Path("output").mkdir(exist_ok=True)
     pdf_file = "output/SportScroll_" + datestamp + ".pdf"
-    pdf_data = get_pdf_data()
     html = generate_html(data=pdf_data)
     HTML(string=html).write_pdf(pdf_file)
 

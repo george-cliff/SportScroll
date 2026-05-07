@@ -9,14 +9,12 @@ from src.config import load_config
 BASE_URL = "https://www.thesportsdb.com/api/v1/json"
 PREM_URL = "https://www.thesportsdb.com/api/v2/json"
 
-config = load_config()
-
 def get_url():
     """returns the URL depending if the user has toggled premium in config"""
-    if config["premium"]:
-        url = f"{PREM_URL}/{config['key']}"
+    if load_config()["premium"]:
+        url = f"{PREM_URL}/{load_config()['key']}"
     else:
-        url = f"{BASE_URL}/{config['key']}"
+        url = f"{BASE_URL}/{load_config()['key']}"
     return url
 
 def get_events_on_date(league_id, event_date):
@@ -33,7 +31,7 @@ def get_tv(event_id):
     url = f"{get_url()}/lookuptv.php"
     response = requests.get(url, params={"id": event_id}, timeout = 10)
     channels = response.json().get("tvevent") or []
-    region = config["tv_region"]
+    region = load_config()["tv_region"]
     channel_list = [] # handles cases where multiple channels are showing the same event
     for c in channels:
         if c.get("strCountry", "").lower() == region.lower():

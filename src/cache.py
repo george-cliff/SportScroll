@@ -1,20 +1,16 @@
 # Standard library Imports
 from datetime import timedelta, datetime
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 # Related third party imports
 import json
 
 # Local application/library specific imports
-from src.config import load_config
-
-config = load_config()
-tz = ZoneInfo(config["timezone"])
+from src.config import load_config, get_timezone
 
 def save_cache(data):
     """writes a json to .cache which contains the api information to prevent hitting rate limits"""
-    timestamp = datetime.now(tz).strftime("%Y%m%dT%H%M%SZ")
+    timestamp = datetime.now(get_timezone()).strftime("%Y%m%dT%H%M%SZ")
     cache_path = Path(".cache")
     cache_path.mkdir(exist_ok=True)
     file_path = cache_path / f"events-{timestamp}.json"
@@ -29,9 +25,9 @@ def cache_valid():
     latest = files[-1]
     latest = latest.stem
     _, latest = latest.split("-")
-    cache_time = datetime.strptime(latest, "%Y%m%dT%H%M%SZ").replace(tzinfo=tz)
-    timestamp = datetime.now(tz)
-    if timestamp > cache_time + timedelta(minutes=config["cache_ttl_mins"]):
+    cache_time = datetime.strptime(latest, "%Y%m%dT%H%M%SZ").replace(tzinfo=get_timezone())
+    timestamp = datetime.now(get_timezone())
+    if timestamp > cache_time + timedelta(minutes=load_config()["cache_ttl_mins"]):
         return False
 
     return True
