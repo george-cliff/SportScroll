@@ -76,16 +76,14 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 ## Roadmap
 
 **Code improvements**
-
 - Untangle the spaghetti
 - Small code review fixes
-- Refactor HTML generation in `pdf.py`, setting it up for multi-sport support
-- fix issues with pipeline when date given is not `date.today`
+- Fix issues with pipeline when date given is not `date.today`
 
 **Features**
 
 - Multi-sport support with sport specific layouts
-- using offical sports codes (e.g. https://liaison.reuters.com/tools/sports-team-codes and https://en.wikipedia.org/wiki/Template:F1stat)
+- Use offical sports/teams codes (e.g. https://liaison.reuters.com/tools/sports-team-codes and https://en.wikipedia.org/wiki/Template:F1stat)
 - Wire TV channel lookup into the PDF output
 - Improve PDF formatting and visual polish
 - Add cache cleanup so old `.json` files don't accumulate in `.cache/`
