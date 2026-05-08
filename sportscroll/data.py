@@ -10,9 +10,9 @@ import json
 # Related third party imports
 
 # Local application/library specific imports
-from src.config import load_config, get_timezone
-from src.api import get_events_on_date
-from src.cache import load_cache, save_cache, cache_valid
+from sportscroll.config import load_config, get_timezone
+from sportscroll.api import get_events_on_date
+from sportscroll.cache import load_cache, save_cache, cache_valid
 
 LOOKBACK_DAYS = 1
 LOOKAHEAD_DAYS = 3

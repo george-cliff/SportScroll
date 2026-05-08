@@ -9,7 +9,7 @@ Gathers the event data, grouped by sport and date from the SportsDB API.
 import requests
 
 # Local application/library specific imports
-from src.config import load_config
+from sportscroll.config import load_config
 
 BASE_URL = "https://www.thesportsdb.com/api/v1/json"
 PREM_URL = "https://www.thesportsdb.com/api/v2/json"

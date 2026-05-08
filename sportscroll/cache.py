@@ -15,7 +15,7 @@ from pathlib import Path
 
 
 # Local application/library specific imports
-from src.config import load_config, get_timezone
+from sportscroll.config import load_config, get_timezone
 
 CACHE_DIR = Path(".cache")
 CACHE_GLOB = "events-*.json"

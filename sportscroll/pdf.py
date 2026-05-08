@@ -12,7 +12,7 @@ from pathlib import Path
 from weasyprint import HTML
 
 # Local application/library specific imports
-from src.config import get_timezone, get_league_abbrs
+from sportscroll.config import get_timezone, get_league_abbrs
 
 MAX_UPCOMING = 10
 OUTPUT_DIR = Path("output")

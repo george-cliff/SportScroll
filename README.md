@@ -39,7 +39,7 @@ sportscroll/
 ├── assets/
 │   ├── example_output.png
 │   └── example_output.pdf
-└── src/
+└── sportscroll/
     ├── api.py           # TheSportsDB API client
     ├── cache.py         # cache read/write/validation
     ├── config.py        # config loader
@@ -65,7 +65,7 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 ## Usage
 
 1. edit `config.yaml` to your preferences and timezone
-2. run `main.py`
+2. run `python -m sportscroll`
 3. check `output/` for your *SportScroll PDF*
 
 ## Examples
