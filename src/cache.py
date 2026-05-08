@@ -19,7 +19,7 @@ from src.config import load_config, get_timezone
 
 CACHE_DIR = Path(".cache")
 CACHE_GLOB = "events-*.json"
-CACHE_TIMESTAMP = "%Y%m%dT%H%M%SZ"
+CACHE_TIMESTAMP = "%Y%m%dT%H%M%S"
 
 
 def save_cache(data):

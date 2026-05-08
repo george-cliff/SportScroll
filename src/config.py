@@ -38,6 +38,22 @@ def get_timezone():
     """
     return ZoneInfo(load_config()["timezone"])
 
+@lru_cache(maxsize=1)
+def get_league_abbrs():
+    """Returns a mapping of league config names to their abbreviations.
+
+    Returns:
+        A dict of {league name: abbreviation} for all configured leagues
+        that have an abbr field set.
+    """
+    abbrs = {}
+    for _, leagues in load_config()["sports"].items():
+        for _, league in leagues.items():
+            if "abbr" in league:
+                abbrs[league["name"]] = league["abbr"]
+    return abbrs
+
+
 
 if __name__ == "__main__":
     print(load_config())

@@ -21,19 +21,23 @@ sports:
   Motorsports:
     f1:
       name: "Formula 1" #quoted for robustness
+      abbr: "F1"
       league_id: 4370
       enabled: false
   Football:
     pl:
-      name: "Premier League"
+      name: "English Premier League"
+      abbr: "EPL"
       league_id: 4328
       enabled: true
     gb:
       name: "German Bundesliga"
+      abbr: "1BL"
       league_id: 4331
       enabled: true
     cl:
       name: "UEFA Champions League"
+      abbr: "UCL"
       league_id: 4480
       enabled: true
 
