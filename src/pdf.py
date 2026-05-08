@@ -121,6 +121,28 @@ def _render_upcoming_cells(data):
         rows += "<tr>" + "".join(f"<td>{cell}</td>" for cell in pair) + "</tr>"
     return f"<table class='upcoming-table' align='center'>{rows}</table>"
     
+def _render_section(heading, renderer, section_data):
+    """Renders a titled section of events using a sport-specific renderer dict.
+
+    Args:
+        heading: Section heading (e.g. "Yesterday's Results").
+        renderer: Dict of {category: render_function} — falls back to _render_generic.
+        section_data: Dict of {category: {league: [events]}} for one day.
+
+    Returns:
+        An HTML string for the full section.
+    """
+    section_html = [f"<h2>{heading}</h2>"]
+    for category, leagues in section_data.items():
+        if leagues:
+            section_html.append(f"<h3>{category}</h3>")
+        for league_name, events in leagues.items():
+            section_html.append(f"<h4>{league_name}</h4>")
+            for event in events:
+                start_time = _format_event_time(event)
+                section_html.append(renderer.get(category, _render_generic)(start_time, event))
+    return "".join(section_html)
+
 
 def generate_html(data):
     """Generates an HTML string from the structured event data dict.
@@ -132,34 +154,15 @@ def generate_html(data):
     Returns:
         A complete HTML string ready for rendering.
     """
-    html = f"<html><head>{CSS}</head><body>"
     date_now = datetime.now(get_timezone())
     display_date = f"{date_now:%a} {date_now.day} {date_now:%b %Y}"
+
+    html = f"<html><head>{CSS}</head><body>"
     html += f"<h1>The Sport Scroll - {display_date}</h1>"
-
-    html += "<h2>Yesterday's Results</h2>"
-    for category, leagues in data["yesterday"].items():
-        if leagues:
-            html += f"<h3>{category}</h3>"
-        for league_name, events in leagues.items():
-            html += f"<h4>{league_name}</h4>"
-            for event in events:
-                start_time = _format_event_time(event)
-                html += RESULT_RENDERERS.get(category, _render_generic)(start_time, event)     
-
-    html += "<h2>Today's Sports</h2>"
-    for category, leagues in data["today"].items():
-        if leagues:
-            html += f"<h3>{category}</h3>"
-        for league_name, events in leagues.items():
-            html += f"<h4>{league_name}</h4>"
-            for event in events:
-                start_time = _format_event_time(event)
-                html += SCHEDULED_RENDERERS.get(category, _render_generic)(start_time, event)
-
+    html += _render_section("Yesterday's Results", RESULT_RENDERERS, data["yesterday"])
+    html += _render_section("Today's Sports", SCHEDULED_RENDERERS, data["today"])
     html += "<h2>Upcoming Events</h2>"
     html += _render_upcoming_cells(data)
-
     html += "</body></html>"
     return html
 
