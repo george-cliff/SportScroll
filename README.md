@@ -94,11 +94,12 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 - CLI menu for configuration without editing `config.yaml`
 - Cron job support with auto-print each morning
 
+## Dev Log
+I've been keeping daily notes in [Dev Log](DEVLOLG.MD) this helps myself and others understand the design ideas, my thought proccess, and where I am currently at within the project. If you have the time and want to, feel free to give it a read!
 
 ## Contributing
 
 This is a personal learning project. However, feedback and bug reports are welcome and encouraged.
-
 
 ## License
 
