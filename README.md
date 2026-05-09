@@ -100,7 +100,7 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 
 ## Dev Log
 
-I've been keeping daily notes in [Dev Log](DEVLOG.MD) this helps myself and others understand the design ideas, my thought proccess, and where I am currently at within the project. If you have the time and want to, feel free to give it a read!
+I've been keeping daily notes in [Dev Log](DEVLOG.md) this helps myself and others understand the design ideas, my thought proccess, and where I am currently at within the project. If you have the time and want to, feel free to give it a read!
 
 ## Contributing
 
