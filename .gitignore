@@ -21,7 +21,6 @@ Thumbs.db
 .cache/
 output/
 *.log
-DEVLOG.md
 ROADMAP.md
 CLAUDE.md
 
