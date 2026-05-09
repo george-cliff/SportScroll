@@ -1,6 +1,7 @@
 # Code Style Personal Reference
 
-# A Note on Authorship
+## A Note on Authorship
+>
 > Generated in collaboration with Claude Code. I showed my code to Claude and it mentioned PEP 8 standards for Python, we went through my preferences for how I write code. I struggle to know what to write for docstrings and comments as I've never received proper guidance on how to write them. This document is a helper for me to remember what to write, how to write it, and best practices for formatting functions and variables.
 
 ---
@@ -95,7 +96,7 @@ score = recent * recent_weight + historical * historical_weight
 - Capitalise the first letter for full sentences; lowercase fragments are OK for very short notes
 - Don't end short inline comments with a period; do end multi-sentence ones
 - One short line max as inline. If you need a paragraph, put it as a block comment **above** the code (or it's actually a docstring)
-- Block comments: each line starts with `# `, indented to match the code below it
+- Block comments: each line starts with `#`, indented to match the code below it
 
 ---
 
@@ -106,11 +107,14 @@ score = recent * recent_weight + historical * historical_weight
 - Every public module, function, class, and method should have a docstring
 - Always triple double quotes: `"""..."""`
 - One-line docstring: keep on one line, complete sentence, ending in a period
+
   ```python
   def is_active(user):
       """Returns True if the user has logged in within the last 30 days."""
   ```
+
 - Multi-line docstring: summary line, blank line, more detail, closing `"""` on its own line
+
   ```python
   def build_report(records):
       """Returns the structured report dict consumed by the renderer.
@@ -196,7 +200,7 @@ def _latest_record():
 ### The conventions
 
 | Pattern | Meaning | Use for |
-|---|---|---|
+| --- | --- | --- |
 | `_name` | Private / internal | Helpers not meant to be called from outside the module |
 | `__name` | Dunder / magic | Python-reserved — `__init__`, `__str__` etc. Don't invent these |
 | `name_` | Trailing underscore | Avoiding a clash with a Python keyword (`class_`, `type_`) |

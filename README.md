@@ -4,17 +4,21 @@ A configurable PDF that generates yesterday's results, today's events, and upcom
 
 ## Table of Contents
 
-- [Background](#background)
-- [Install](#install)
-- [Project Structure](#project-structure)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Examples](#examples)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-- [Credits / Acknowledgements](#credits--acknowledgements)
-
+- [SportScroll](#sportscroll)
+  - [Table of Contents](#table-of-contents)
+  - [Background](#background)
+  - [Install](#install)
+  - [Project Structure](#project-structure)
+  - [Configuration](#configuration)
+  - [Usage](#usage)
+  - [Examples](#examples)
+  - [Roadmap](#roadmap)
+    - [Code improvements](#code-improvements)
+    - [Features](#features)
+  - [Dev Log](#dev-log)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Credits / Acknowledgements](#credits--acknowledgements)
 
 ## Background
 
@@ -31,7 +35,7 @@ Each morning I found myself reaching for my phone and scrolling through multiple
 
 ## Project Structure
 
-```
+```text
 sportscroll/
 ├── main.py              # entry point
 ├── config.yaml          # user configuration
@@ -52,7 +56,7 @@ sportscroll/
 All configuration is in `config.yaml` in the project root.
 
 | Key | Description | Default |
-|-----|-------------|---------|
+| ----- | ------------- | --------- |
 | `timezone` | Your local timezone (tz database format e.g. `Europe/London`) | `Europe/London` |
 | `tv_region` | Country name for TV channel lookup | `United Kingdom` |
 | `cache_ttl_mins` | How long cached data is considered fresh (in minutes) | `60` |
@@ -72,18 +76,18 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 
 ![example-output](assets/example_output.png)
 
-
 ## Roadmap
 
-**Code improvements**
+### Code improvements
+
 - Untangle the spaghetti
 - Small code review fixes
 - Fix issues with pipeline when date given is not `date.today`
 
-**Features**
+### Features
 
 - Multi-sport support with sport specific layouts
-- Use offical sports/teams codes (e.g. https://liaison.reuters.com/tools/sports-team-codes and https://en.wikipedia.org/wiki/Template:F1stat)
+- Use offical sports/teams codes (e.g. <https://liaison.reuters.com/tools/sports-team-codes> and <https://en.wikipedia.org/wiki/Template:F1stat>)
 - Wire TV channel lookup into the PDF output
 - Improve PDF formatting and visual polish
 - Add cache cleanup so old `.json` files don't accumulate in `.cache/`
@@ -95,7 +99,8 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 - Cron job support with auto-print each morning
 
 ## Dev Log
-I've been keeping daily notes in [Dev Log](DEVLOLG.MD) this helps myself and others understand the design ideas, my thought proccess, and where I am currently at within the project. If you have the time and want to, feel free to give it a read!
+
+I've been keeping daily notes in [Dev Log](DEVLOG.MD) this helps myself and others understand the design ideas, my thought proccess, and where I am currently at within the project. If you have the time and want to, feel free to give it a read!
 
 ## Contributing
 
