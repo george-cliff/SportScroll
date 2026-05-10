@@ -13,8 +13,6 @@ A configurable PDF that generates yesterday's results, today's events, and upcom
   - [Usage](#usage)
   - [Examples](#examples)
   - [Roadmap](#roadmap)
-    - [Code improvements](#code-improvements)
-    - [Features](#features)
   - [Dev Log](#dev-log)
   - [Contributing](#contributing)
   - [License](#license)

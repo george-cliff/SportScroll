@@ -43,7 +43,7 @@ Rules for keeping them consistent across the project:
 ### Other import rules worth keeping
 
 - All imports go at the top of the file, after the module docstring and any `__future__` imports
-- Within each group, alphabetical order is the convention
+- Within each group: `import x` statements first, then `from x import y` statements. Alphabetical within each sub-group.
 - Avoid `from x import *` — it pollutes the namespace and breaks tooling
 - Avoid imports inside functions unless you have a real reason (circular imports, optional dependencies, expensive modules)
 - One import per line for `import` statements; `from x import a, b, c` on one line is fine
@@ -60,6 +60,7 @@ The code already shows what it does. A comment earns its place when it adds cont
 
 ### Good inline comments
 
+- **Label logical phases of a multi-step function.** `# Check TTL expiry` above a block of 4 related lines is useful — it lets a reader scan the structure without reading every line. This is different from commenting a single obvious line.
 - **Justify a non-obvious choice.** `# use strftime over str() so the format is explicit` — tells future-you the format wasn't accidental.
 - **Explain a magic number.** `# API rate limit is 30/min, 10 keeps us well below` — the *number* is in the code, the *reason* lives in the comment.
 - **Capture domain knowledge.** `# UEFA fixtures are always returned in UTC, regardless of venue` — this isn't visible from any line of code.

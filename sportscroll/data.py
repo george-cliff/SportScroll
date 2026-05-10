@@ -4,79 +4,107 @@ Fetches, caches, and slices event data into the structure consumed by the PDF re
 """
 
 # Standard library Imports
-from datetime import date, timedelta, datetime
-import json
+from datetime import datetime, timedelta
 
 # Related third party imports
 
 # Local application/library specific imports
-from sportscroll.config import load_config, get_timezone
-from sportscroll.api import get_events_on_date
-from sportscroll.cache import load_cache, save_cache, cache_valid
+from sportscroll.api import get_football_matches
+from sportscroll.cache import cache_valid, load_cache, save_cache
+from sportscroll.config import get_timezone, load_config
+
 
 LOOKBACK_DAYS = 1
-LOOKAHEAD_DAYS = 3
+LOOKAHEAD_DAYS = 5
 DATE_FORMAT = "%Y-%m-%d"
 
 
-def _get_events(target_date):
-    """Gathers all event information for a target_date, grouped by sport.
-    
-    Args:
-        target_date: A datetime object.
-
-    Returns:
-        A dict containing all event information for all events on target_date.
-    """
-    raw_events = {}
-    for category, leagues in load_config()["sports"].items():
-        raw_events[category] = {}
-        for _, league in leagues.items():
-            if league["enabled"]: 
-                events = get_events_on_date(league_id=league["league_id"], target_date=target_date)
-                if events:
-                    raw_events[category][league['name']] = events
-    return raw_events
-
-
-def get_latest_data(target_date=None):
-    """Returns a full 5-day window of event data, using the cache if valid.
+def _get_events(date_from, date_to):
+    """Fetches all events across all enabled leagues for a date range and adds local time to each of the events.
 
     Args:
-        target_date: a date object for the fetch window. Defaults to now if not provided.
+        date_from: A datetime object for the start of the date range.
+        date_to: A datetime object for the end of the date range.
 
     Returns:
         A dict keyed by ISO date string, each value being a dict of categories and leagues.
     """
-    if target_date is None:
-        target_date = datetime.now(get_timezone())
-    valid = cache_valid()
-    if valid:
-        raw_events = load_cache()
-    else:
-        raw_events = {}
-        for i in range(-LOOKBACK_DAYS, LOOKAHEAD_DAYS + 1):
-            fetch_date = target_date + timedelta(days=i)
-            raw_events[fetch_date.strftime(DATE_FORMAT)] = _get_events(target_date=fetch_date)
-        save_cache(raw_events)
+    raw_events = {}
+    # walk through each league to send as a request to the API, due to API returning one competition per request
+    for category, leagues in load_config()["sports"].items():
+        for comp_code, league in leagues.items():
+            if not league["enabled"]:
+                continue
+            matches = get_football_matches(comp_code, date_from, date_to)
+
+            # Go through each match recived by the request, adds local time to the data, and adds each match to its date's list
+            for match in matches:
+                utc_dt = datetime.fromisoformat(match["utcDate"].replace("Z", "+00:00"))
+                local_dt = utc_dt.astimezone(get_timezone())
+                date_str = local_dt.strftime(DATE_FORMAT)
+                match["localTime"] = local_dt.isoformat()
+                if date_str not in raw_events:
+                    raw_events[date_str] = {}
+                if category not in raw_events[date_str]:
+                    raw_events[date_str][category] = {}
+                if league["name"] not in raw_events[date_str][category]:
+                    raw_events[date_str][category][league["name"]] = []
+                raw_events[date_str][category][league["name"]].append(match)
     return raw_events
 
 
-def get_pdf_data():
+def get_latest_data(target_date):
+    """Returns a full window of event data, using the cache if valid.
+
+    Args:
+        target_date: A datetime object for the fetch window.
+
+    Returns:
+        A dict keyed by ISO date string, each value being a dict of categories and leagues.
+    """
+
+    # check cache for data and return early if cache is valid
+    date_from = target_date - timedelta(days=LOOKBACK_DAYS)
+    date_to = target_date + timedelta(days=LOOKAHEAD_DAYS)
+    valid = cache_valid(date_from=date_from, date_to=date_to)
+    if valid:
+        raw_events = load_cache()
+        return raw_events
+
+    # set up the raw_events dict and prefill with dates
+    raw_events = {}
+    for i in range(LOOKBACK_DAYS + LOOKAHEAD_DAYS + 1):
+        date_str = (date_from + timedelta(days=i)).strftime(DATE_FORMAT)
+        raw_events[date_str] = {}
+
+    # gather fresh data and save it to the cache
+    raw_events.update(_get_events(date_from, date_to))
+    save_cache(raw_events)
+    return raw_events
+
+
+def get_pdf_data(target_date):
     """Returns event data sliced into yesterday, today, and upcoming sections.
+
+    Args:
+        target_date: A datetime object for the date the scroll is being generated for.
 
     Returns:
         A dict with keys 'yesterday', 'today', and 'upcoming', ready for the PDF renderer.
     """
-    pdf_date = datetime.now(get_timezone())
-    latest_data = get_latest_data(pdf_date)
-    yesterday_data = latest_data[(pdf_date - timedelta(days=LOOKBACK_DAYS)).strftime(DATE_FORMAT)]
-    today_data = latest_data[pdf_date.strftime(DATE_FORMAT)]
+
+    # Gather the latest for given date
+    latest_data = get_latest_data(target_date)
+
+    # Slice the date window into named sections ready for the renderer
+    yesterday_data = latest_data[(target_date - timedelta(days=LOOKBACK_DAYS)).strftime(DATE_FORMAT)]
+    today_data = latest_data[target_date.strftime(DATE_FORMAT)]
     upcoming_data = {}
     for i in range(1, LOOKAHEAD_DAYS + 1):
-        target_date = pdf_date + timedelta(days=i)
-        upcoming_data[target_date.strftime(DATE_FORMAT)] = latest_data[target_date.strftime(DATE_FORMAT)]
+        upcoming_date = target_date + timedelta(days=i)
+        upcoming_data[upcoming_date.strftime(DATE_FORMAT)] = latest_data[upcoming_date.strftime(DATE_FORMAT)]
 
+    # Build and return the pdf_data dict ready for rendering
     pdf_data = {
         "yesterday": yesterday_data,
         "today": today_data,
@@ -86,4 +114,8 @@ def get_pdf_data():
 
 
 if __name__ == "__main__":
-    raw_events = get_latest_data(datetime(2026, 5, 10))
+    import json
+    raw_events = get_latest_data(datetime.now(get_timezone()))
+    with open("test_output.json", "w") as f:
+        json.dump(raw_events, f, indent=2)
+

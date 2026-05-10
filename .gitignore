@@ -23,6 +23,7 @@ output/
 *.log
 ROADMAP.md
 CLAUDE.md
+.env
 
 # Distribution
 build/

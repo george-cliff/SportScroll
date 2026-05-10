@@ -5,17 +5,22 @@ lifetime of the process.
 """
 
 # Standard library Imports
+import os
 from functools import lru_cache
 from zoneinfo import ZoneInfo
 
+
 # Related third party imports
 import yaml
+from dotenv import load_dotenv
 
 # Local application/library specific imports
 
 
 CONFIG_FILE = "config.yaml"
+ENV_FILE = ".env"
 
+load_dotenv(ENV_FILE)
 
 @lru_cache(maxsize=1)
 def load_config():
@@ -38,21 +43,28 @@ def get_timezone():
     """
     return ZoneInfo(load_config()["timezone"])
 
-@lru_cache(maxsize=1)
-def get_league_abbrs():
-    """Returns a mapping of league config names to their abbreviations.
+
+def get_football_data_key():
+    """Returns the football-data.org API key from the environment.
 
     Returns:
-        A dict of {league name: abbreviation} for all configured leagues
-        that have an abbr field set.
+        A string containing the football-data.org API key, or None if not set.
+    """
+    return os.environ.get("FOOTBALL_DATA_API_KEY")
+
+
+@lru_cache(maxsize=1)
+def get_league_abbrs():
+    """Returns a mapping of league names to their competition code keys.
+
+    Returns:
+        A dict of {league name: competition code} for all configured leagues.
     """
     abbrs = {}
     for _, leagues in load_config()["sports"].items():
-        for _, league in leagues.items():
-            if "abbr" in league:
-                abbrs[league["name"]] = league["abbr"]
+        for code, league in leagues.items():
+            abbrs[league["name"]] = code            
     return abbrs
-
 
 
 if __name__ == "__main__":

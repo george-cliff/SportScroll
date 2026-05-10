@@ -5,35 +5,10 @@
 - [Dev Log](#dev-log)
   - [Table of Contents](#table-of-contents)
   - [Day 1 - 2026-05-04](#day-1---2026-05-04)
-    - [Scope - Day 1](#scope---day-1)
-    - [Design - Overall Project Plans](#design---overall-project-plans)
-    - [Achieved - Day 1](#achieved---day-1)
-    - [Issues - Day 1](#issues---day-1)
-    - [Day 2 Ideas](#day-2-ideas)
   - [Day 2 - 2026-05-05](#day-2---2026-05-05)
-    - [Scope - Day 2](#scope---day-2)
-    - [Design - What I want from the PDF](#design---what-i-want-from-the-pdf)
-    - [Achieved - Day 2](#achieved---day-2)
-    - [Issues - Day 2](#issues---day-2)
-    - [Day 3 Ideas](#day-3-ideas)
   - [Day 3 - 2026-05-06](#day-3---2026-05-06)
-    - [Scope - Day 3](#scope---day-3)
-    - [Design - The github day](#design---the-github-day)
-    - [Achieved - Day 3](#achieved---day-3)
-    - [Issues - Day 3](#issues---day-3)
-    - [Day 4 Ideas](#day-4-ideas)
   - [Day 4 - 2026-05-07](#day-4---2026-05-07)
-    - [Scope - Day 4](#scope---day-4)
-    - [Design - Why Claude?](#design---why-claude)
-    - [Achieved - Day 4](#achieved---day-4)
-    - [Issues - Day 4](#issues---day-4)
-    - [Day 5 Ideas](#day-5-ideas)
   - [Day 5 - 2026-05-08](#day-5---2026-05-08)
-    - [Scope - Day 5](#scope---day-5)
-    - [Design - What's with all the commits?](#design---whats-with-all-the-commits)
-    - [Achieved - Day 5](#achieved---day-5)
-    - [Issues - Day 5](#issues---day-5)
-    - [Day 6 Ideas](#day-6-ideas)
   - [Bonus Day - 2026-05-09](#bonus-day---2026-05-09)
   - [Day 6 - 2026-05-10](#day-6---2026-05-10)
 
@@ -251,3 +226,27 @@
 - removed both from `.gitignore` as even though these are both mainly for me, to have them documented is an important part of the project learning process
 
 ## Day 6 - 2026-05-10
+
+### Scope - Day 6
+
+- fix missing matches bug, eventds day php on returns max 3 results
+- fix null scores bug
+- sort ToC for devlog, get rid of all the H3s
+- fix abbr handling for upocming cells
+- add guards where needed and error handling
+- OpenF1 research and start hunting for a WEC API
+
+### Design - API limitiations and looking for others
+
+- `TheSportsDB`'s free tier caps responses at 3 results per request, found out when several matches failed to appear today.
+- I have decided to swap to football-data.org, which has no result cap on the free tier but only covers 12 competitions.
+  - these competitions cover everything that I need for now.
+- I will likely utilise `TheSportsDB` in the future, likley for sports with no specialised API but i've placed it on the back burner for now.
+- Another likely use case for TheSportsDB is using it to discover the events and aggregate them. then fetch the detail from a specialist API.
+- This means the project is now going to be utlising multiple apis, each sport gets the best free API available.
+
+### Achieved
+
+- As the APIs now have personal keys I've added .env and .env.example to keep keys private
+- refactored `api.py` and the data pipeline for football to use `football-data` API
+- edited ToC to only show `H1`s and `H2`s

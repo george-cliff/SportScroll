@@ -6,8 +6,8 @@ hit once per configured TTL window.
 
 
 # Standard library Imports
-from datetime import timedelta, datetime
 import json
+from datetime import datetime, timedelta
 from pathlib import Path
 
 
@@ -23,7 +23,7 @@ CACHE_TIMESTAMP = "%Y%m%dT%H%M%S"
 
 
 def save_cache(data):
-    """Writes a json to .cache which contains the API information to prevent hitting rate limits.
+    """Saves a json to .cache which contains the API information to prevent hitting rate limits.
     
     Args:
         data: A dict which contains event data from the API.
@@ -35,20 +35,38 @@ def save_cache(data):
         json.dump(data, f, indent=4)
 
 
-def cache_valid():
-    """Checks if there is a file in the cache and it is within the TTL.
-    
+def cache_valid(date_from, date_to):
+    """Checks if a cache file exists, is within TTL, and covers the required date window.
+
+    Args:
+        date_from: A datetime object for the start of the required window.
+        date_to: A datetime object for the end of the required window.
+
     Returns:
-        True if the cache can be used, False if there is no cache or it has expired.
+        True if the cache can be used, False if there is no cache, it has expired,
+        or it does not cover all dates in the window.
     """
+
+    # Check for Cache File Existing
     latest_file = _get_latest_cache_file()
     if latest_file is None:
         return False
+
+    # Check for TTL expiry
     cache_str = latest_file.stem.removeprefix("events-")
     cache_time = datetime.strptime(cache_str, CACHE_TIMESTAMP).replace(tzinfo=get_timezone())
     timestamp = datetime.now(get_timezone())
     if timestamp > cache_time + timedelta(minutes=load_config()["cache_ttl_mins"]):
         return False
+    
+    # Check for Correct Date of Cache (stops date mismatchs around midnight)
+    num_days = (date_to - date_from).days
+    with open(latest_file) as f:
+        cached_data = json.load(f)
+    for i in range(num_days + 1):
+        date_str = (date_from + timedelta(days=i)).strftime("%Y-%m-%d")
+        if date_str not in cached_data:
+            return False
 
     return True
 
