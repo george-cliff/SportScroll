@@ -76,23 +76,15 @@ To enable or disable a sport, set `enabled: true` or `enabled: false` under the 
 
 ## Roadmap
 
-### Code improvements
-
-- Untangle the spaghetti
-- Small code review fixes
-- Fix issues with pipeline when date given is not `date.today`
-
 ### Features
 
 - Multi-sport support with sport specific layouts
-- Use offical sports/teams codes (e.g. <https://liaison.reuters.com/tools/sports-team-codes> and <https://en.wikipedia.org/wiki/Template:F1stat>)
-- Wire TV channel lookup into the PDF output
+- Add TV channel lookup into the PDF output
 - Improve PDF formatting and visual polish
-- Add cache cleanup so old `.json` files don't accumulate in `.cache/`
 - Favourite teams config and PDF highlighting
-- Venue name and country flag per event, possibly weather
-- Sport-specific layouts for feature days (Championship standings after an f1 Weekend)
-- Logging
+- Venue name and country flag per event
+- Weather API to get weather for an events start time (Always do love a wet F1 race)
+- Sport-specific layouts for feature days (Championship standings after a full F1 Weekend)
 - CLI menu for configuration without editing `config.yaml`
 - Cron job support with auto-print each morning
 
