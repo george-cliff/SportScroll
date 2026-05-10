@@ -33,6 +33,10 @@ def save_cache(data):
     """
     timestamp = datetime.now(get_timezone()).strftime(CACHE_TIMESTAMP)
     CACHE_DIR.mkdir(exist_ok=True)
+    if any(CACHE_DIR.glob(CACHE_GLOB)):
+        logger.info("Cleaning cache - new file on the way")
+        for old_file in CACHE_DIR.glob(CACHE_GLOB):
+            old_file.unlink()
     file_path = CACHE_DIR / f"events-{timestamp}.json"
     with open(file_path, "w") as f:
         json.dump(data, f, indent=4)

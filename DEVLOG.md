@@ -11,6 +11,7 @@
   - [Day 5 - 2026-05-08](#day-5---2026-05-08)
   - [Bonus Day - 2026-05-09](#bonus-day---2026-05-09)
   - [Day 6 - 2026-05-10](#day-6---2026-05-10)
+  - [Day 7 - 2026-05-11](#day-7---2026-05-11)
 
 ## Day 1 - 2026-05-04
 
@@ -239,8 +240,7 @@
 ### Design - API limitiations and looking for others
 
 - `TheSportsDB`'s free tier caps responses at 3 results per request, found out when several matches failed to appear today.
-- I have decided to swap to football-data.org, which has no result cap on the free tier but only covers 12 competitions.
-  - these competitions cover everything that I need for now.
+- I have decided to swap to football-data.org, which has no result cap on the free tier but only covers 12 competitions. These competitions cover everything that I need for now.
 - I will likely utilise `TheSportsDB` in the future, likley for sports with no specialised API but i've placed it on the back burner for now.
 - Another likely use case for TheSportsDB is using it to discover the events and aggregate them. then fetch the detail from a specialist API.
 - This means the project is now going to be utlising multiple apis, each sport gets the best free API available.
@@ -248,5 +248,15 @@
 ### Achieved
 
 - As the APIs now have personal keys I've added .env and .env.example to keep keys private
-- refactored `api.py` and the data pipeline for football to use `football-data` API
-- edited ToC to only show `H1`s and `H2`s
+- Refactored `api.py` and the data pipeline for football to use `football-data` API
+- Edited ToC to only show `H1`s and `H2`s
+- Added Logging to help figure out where in the pipleline the code is.
+
+### Day 7 Ideas
+
+- add guards where needed and error handling
+- OpenF1 research and start hunting for a WEC API
+
+## Day 7 - 2026-05-11
+
+### Scope - Day 7
