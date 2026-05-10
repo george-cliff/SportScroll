@@ -5,6 +5,7 @@ file in the output/ directory via WeasyPrint.
 """
 
 # Standard library Imports
+import logging
 from datetime import datetime
 from pathlib import Path
 
@@ -13,6 +14,8 @@ from weasyprint import HTML
 
 # Local application/library specific imports
 from sportscroll.config import get_league_abbrs
+
+logger = logging.getLogger(__name__)
 
 MAX_UPCOMING = 10
 OUTPUT_DIR = Path("output")
@@ -178,5 +181,8 @@ def generate_pdf(pdf_data, target_date):
     datestamp = target_date.strftime("%Y-%m-%d")
     OUTPUT_DIR.mkdir(exist_ok=True)
     pdf_file = OUTPUT_DIR / f"SportScroll_{datestamp}.pdf"
+    logger.info("Rendering HTML")
     html = generate_html(data=pdf_data, target_date=target_date)
+    logger.info("Writing PDF")
     HTML(string=html).write_pdf(pdf_file, presentational_hints=True)
+    logger.info(f"PDF created successfully - saved to {pdf_file}")

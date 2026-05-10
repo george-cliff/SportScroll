@@ -7,6 +7,7 @@ hit once per configured TTL window.
 
 # Standard library Imports
 import json
+import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -16,6 +17,8 @@ from pathlib import Path
 
 # Local application/library specific imports
 from sportscroll.config import load_config, get_timezone
+
+logger = logging.getLogger(__name__)
 
 CACHE_DIR = Path(".cache")
 CACHE_GLOB = "events-*.json"
@@ -33,6 +36,7 @@ def save_cache(data):
     file_path = CACHE_DIR / f"events-{timestamp}.json"
     with open(file_path, "w") as f:
         json.dump(data, f, indent=4)
+    logger.info(f"Cache file saved successfully - {file_path}")
 
 
 def cache_valid(date_from, date_to):
@@ -50,6 +54,7 @@ def cache_valid(date_from, date_to):
     # Check for Cache File Existing
     latest_file = _get_latest_cache_file()
     if latest_file is None:
+        logger.info("No cache file found - fetching new data")
         return False
 
     # Check for TTL expiry
@@ -57,6 +62,7 @@ def cache_valid(date_from, date_to):
     cache_time = datetime.strptime(cache_str, CACHE_TIMESTAMP).replace(tzinfo=get_timezone())
     timestamp = datetime.now(get_timezone())
     if timestamp > cache_time + timedelta(minutes=load_config()["cache_ttl_mins"]):
+        logger.info("Cache expired - fetching new data")
         return False
     
     # Check for Correct Date of Cache (stops date mismatchs around midnight)
@@ -66,8 +72,9 @@ def cache_valid(date_from, date_to):
     for i in range(num_days + 1):
         date_str = (date_from + timedelta(days=i)).strftime("%Y-%m-%d")
         if date_str not in cached_data:
+            logger.info("Cache date mismatch - fetching new data")
             return False
-
+    logger.info("Cache valid - loading from cache")
     return True
 
 
@@ -79,9 +86,12 @@ def load_cache():
     """
     latest_file = _get_latest_cache_file()
     if latest_file is None:
+        logger.warning("Cache file missing after cache_valid() returned True - this shouldn't happen")
         return None
     with open(latest_file) as f:
-        return json.load(f)
+        latest_json = json.load(f)
+    logger.info(f"Cache file loaded successfully - {latest_file}")
+    return latest_json
 
 
 def _get_latest_cache_file():

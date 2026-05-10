@@ -4,6 +4,7 @@ Fetches, caches, and slices event data into the structure consumed by the PDF re
 """
 
 # Standard library Imports
+import logging
 from datetime import datetime, timedelta
 
 # Related third party imports
@@ -13,6 +14,7 @@ from sportscroll.api import get_football_matches
 from sportscroll.cache import cache_valid, load_cache, save_cache
 from sportscroll.config import get_timezone, load_config
 
+logger = logging.getLogger(__name__)
 
 LOOKBACK_DAYS = 1
 LOOKAHEAD_DAYS = 5
@@ -32,12 +34,16 @@ def _get_events(date_from, date_to):
     raw_events = {}
     # walk through each league to send as a request to the API, due to API returning one competition per request
     for category, leagues in load_config()["sports"].items():
+        logger.info(f"Processing {category} - starting loop")
         for comp_code, league in leagues.items():
             if not league["enabled"]:
+                logger.debug(f"{league['name']} disabled - skipping")
                 continue
-            matches = get_football_matches(comp_code, date_from, date_to)
 
+            logger.info(f"{league['name']} enabled - fetching from {date_from.strftime(DATE_FORMAT)} to {date_to.strftime(DATE_FORMAT)}")
+            matches = get_football_matches(comp_code, date_from, date_to)
             # Go through each match recived by the request, adds local time to the data, and adds each match to its date's list
+            logger.info(f"{league['name']} - {len(matches)} matches found")
             for match in matches:
                 utc_dt = datetime.fromisoformat(match["utcDate"].replace("Z", "+00:00"))
                 local_dt = utc_dt.astimezone(get_timezone())
@@ -50,6 +56,7 @@ def _get_events(date_from, date_to):
                 if league["name"] not in raw_events[date_str][category]:
                     raw_events[date_str][category][league["name"]] = []
                 raw_events[date_str][category][league["name"]].append(match)
+                logger.debug(f"{league['name']} - match added on {date_str}")
     return raw_events
 
 
@@ -78,6 +85,7 @@ def get_latest_data(target_date):
         raw_events[date_str] = {}
 
     # gather fresh data and save it to the cache
+    logger.info("Fetching fresh data")
     raw_events.update(_get_events(date_from, date_to))
     save_cache(raw_events)
     return raw_events
@@ -98,11 +106,14 @@ def get_pdf_data(target_date):
 
     # Slice the date window into named sections ready for the renderer
     yesterday_data = latest_data[(target_date - timedelta(days=LOOKBACK_DAYS)).strftime(DATE_FORMAT)]
+    logger.debug("Sliced data for yesterday")
     today_data = latest_data[target_date.strftime(DATE_FORMAT)]
+    logger.debug("Sliced data for today")
     upcoming_data = {}
     for i in range(1, LOOKAHEAD_DAYS + 1):
         upcoming_date = target_date + timedelta(days=i)
         upcoming_data[upcoming_date.strftime(DATE_FORMAT)] = latest_data[upcoming_date.strftime(DATE_FORMAT)]
+    logger.debug("Sliced data for upcoming")
 
     # Build and return the pdf_data dict ready for rendering
     pdf_data = {
@@ -110,6 +121,7 @@ def get_pdf_data(target_date):
         "today": today_data,
         "upcoming": upcoming_data
     }
+    logger.info("PDF data ready for rendering")
     return pdf_data
 
 
