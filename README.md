@@ -1,6 +1,6 @@
 # SportScroll
 
-A configurable PDF that generates yesterday's results, today's events, and upcoming events using "TheSportsDB" api
+A configurable PDF that generates yesterday's results, today's events, and upcoming events using multiple APIs
 
 ## Table of Contents
 
@@ -110,4 +110,5 @@ MIT License © George Cliff
 
 ## Credits / Acknowledgements
 
-- [TheSportsDB](https://www.thesportsdb.com/) — a big thank you to them for the sports data API that makes this whole project possible
+- [TheSportsDB](https://www.thesportsdb.com/) - a big thank you to them for the sports data API that inspired this whole project
+- [football-data.org](https://www.football-data.org/) - for the footbal API.
