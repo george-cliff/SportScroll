@@ -245,7 +245,7 @@
 - Another likely use case for TheSportsDB is using it to discover the events and aggregate them. then fetch the detail from a specialist API.
 - This means the project is now going to be utlising multiple apis, each sport gets the best free API available.
 
-### Achieved
+### Achieved - Day 6
 
 - As the APIs now have personal keys I've added .env and .env.example to keep keys private
 - Refactored `api.py` and the data pipeline for football to use `football-data` API
@@ -260,3 +260,14 @@
 ## Day 7 - 2026-05-11
 
 ### Scope - Day 7
+
+- add guards where needed and error handling
+
+### Design - more API stuff
+
+- Investigated **sports-api** (used by Startpage Search widgets) as a potential single multi-sport source — one API covering events and results across sports would be cleaner than maintaining several. Hit a paywall immediately: the free plan only covers 2022–2024, so current-season data is not available.
+- I also started looking into API retry tools and found tenacity and backoff as my too main options, whilst doing research into them i stumbled across [a graph](https://piptrends.com/compare/backoff-vs-retry-vs-tenacity) that shows tenacity is used in far greate volumes at this moment then backoff so will be using tenacity as it appears to be the industry standard. It may be overkill for this project, but I would rather learn what most people use.
+
+### Achieved - Day 7
+
+- Basic error handling in place with logging messages

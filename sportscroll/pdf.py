@@ -49,10 +49,7 @@ def _render_football_result(start_time, event):
     return football_result
 
 
-RESULT_RENDERERS = {
-    "Football": _render_football_result,
-    "Formula 1": _render_generic
-}
+RESULT_RENDERERS = {"Football": _render_football_result, "Formula 1": _render_generic}
 
 
 def _render_football_fixture(start_time, event):
@@ -64,7 +61,7 @@ def _render_football_fixture(start_time, event):
 
 SCHEDULED_RENDERERS = {
     "Football": _render_football_fixture,
-    "Formula 1": _render_generic
+    "Formula 1": _render_generic,
 }
 
 
@@ -73,15 +70,17 @@ def _render_football_upcoming(start_time, event, abbr=None):
     if abbr:
         football_upcoming = f"<p> {abbr}. "
     else:
-        football_upcoming = f"<p>"
-    football_upcoming += (f"{event['homeTeam']['tla']} vs {event['awayTeam']['tla']}</p>")
-    football_upcoming += (f"<p class='event-info-upc'>{event['localTime'][:10]} @ {start_time}</p>")
+        football_upcoming = "<p>"
+    football_upcoming += f"{event['homeTeam']['tla']} vs {event['awayTeam']['tla']}</p>"
+    football_upcoming += (
+        f"<p class='event-info-upc'>{event['localTime'][:10]} @ {start_time}</p>"
+    )
     return football_upcoming
 
 
 UPCOMING_RENDERERS = {
     "Football": _render_football_upcoming,
-    "Formula 1": _render_generic
+    "Formula 1": _render_generic,
 }
 
 
@@ -103,24 +102,28 @@ def _render_upcoming_cells(data):
             for league_name, events in leagues.items():
                 for event in events:
                     upcoming_events.append((category, league_name, event))
-    upcoming_events = sorted(upcoming_events, key=lambda item: item[2]["localTime"])[:MAX_UPCOMING]
+    upcoming_events = sorted(upcoming_events, key=lambda item: item[2]["localTime"])[
+        :MAX_UPCOMING
+    ]
     if not upcoming_events:
         return "<p>No events</p>"
-    
+
     # Render each event into a HTML cell
     cells = []
     abbrs_dict = get_league_abbrs()
     for category, league_name, event in upcoming_events:
         abbr = abbrs_dict.get(league_name)
         start_time = _format_event_time(event)
-        cells.append(UPCOMING_RENDERERS.get(category, _render_generic)(start_time, event, abbr=abbr))
-    if not cells:
-        return "<p>No events</p>"
+        cells.append(
+            UPCOMING_RENDERERS.get(category, _render_generic)(
+                start_time, event, abbr=abbr
+            )
+        )
 
     # Build Table Rows
     rows = ""
     for i in range(0, len(cells), 5):
-        pair = cells[i:i+5]
+        pair = cells[i : i + 5]
         rows += "<tr>" + "".join(f"<td>{cell}</td>" for cell in pair) + "</tr>"
     return f"<table class='upcoming-table' align='center'>{rows}</table>"
 
@@ -144,7 +147,9 @@ def _render_section(heading, renderer, section_data):
             section_html.append(f"<h4>{league_name}</h4>")
             for event in events:
                 start_time = _format_event_time(event)
-                section_html.append(renderer.get(category, _render_generic)(start_time, event))
+                section_html.append(
+                    renderer.get(category, _render_generic)(start_time, event)
+                )
     return "".join(section_html)
 
 
@@ -183,6 +188,6 @@ def generate_pdf(pdf_data, target_date):
     pdf_file = OUTPUT_DIR / f"SportScroll_{datestamp}.pdf"
     logger.info("Rendering HTML")
     html = generate_html(data=pdf_data, target_date=target_date)
-    logger.info("Writing PDF")
+    logger.info("Writing PDF to %s", pdf_file)
     HTML(string=html).write_pdf(pdf_file, presentational_hints=True)
-    logger.info(f"PDF created successfully - saved to {pdf_file}")
+    logger.info("PDF created successfully")

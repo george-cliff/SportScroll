@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 # Related third party imports
 
 # Local application/library specific imports
-from sportscroll.api import get_football_matches
+from sportscroll.footballl_data_api import get_football_matches
 from sportscroll.cache import cache_valid, load_cache, save_cache
 from sportscroll.config import get_timezone, load_config
 
@@ -40,9 +40,11 @@ def _get_events(date_from, date_to):
                 logger.debug(f"{league['name']} disabled - skipping")
                 continue
 
-            logger.info(f"{league['name']} enabled - fetching from {date_from.strftime(DATE_FORMAT)} to {date_to.strftime(DATE_FORMAT)}")
+            logger.info(
+                f"{league['name']} enabled - fetching from {date_from.strftime(DATE_FORMAT)} to {date_to.strftime(DATE_FORMAT)}"
+            )
             matches = get_football_matches(comp_code, date_from, date_to)
-            # Go through each match recived by the request, adds local time to the data, and adds each match to its date's list
+            # Go through each match received by the request, adds local time to the data, and adds each match to its date's list
             logger.info(f"{league['name']} - {len(matches)} matches found")
             for match in matches:
                 utc_dt = datetime.fromisoformat(match["utcDate"].replace("Z", "+00:00"))
@@ -76,8 +78,9 @@ def get_latest_data(target_date):
     valid = cache_valid(date_from=date_from, date_to=date_to)
     if valid:
         raw_events = load_cache()
-        return raw_events
-
+        if raw_events is not None:
+            return raw_events
+        logger.warning("Cache validated but load failed - fetching fresh data")
     # set up the raw_events dict and prefill with dates
     raw_events = {}
     for i in range(LOOKBACK_DAYS + LOOKAHEAD_DAYS + 1):
@@ -105,21 +108,25 @@ def get_pdf_data(target_date):
     latest_data = get_latest_data(target_date)
 
     # Slice the date window into named sections ready for the renderer
-    yesterday_data = latest_data[(target_date - timedelta(days=LOOKBACK_DAYS)).strftime(DATE_FORMAT)]
+    yesterday_data = latest_data[
+        (target_date - timedelta(days=LOOKBACK_DAYS)).strftime(DATE_FORMAT)
+    ]
     logger.debug("Sliced data for yesterday")
     today_data = latest_data[target_date.strftime(DATE_FORMAT)]
     logger.debug("Sliced data for today")
     upcoming_data = {}
     for i in range(1, LOOKAHEAD_DAYS + 1):
         upcoming_date = target_date + timedelta(days=i)
-        upcoming_data[upcoming_date.strftime(DATE_FORMAT)] = latest_data[upcoming_date.strftime(DATE_FORMAT)]
+        upcoming_data[upcoming_date.strftime(DATE_FORMAT)] = latest_data[
+            upcoming_date.strftime(DATE_FORMAT)
+        ]
     logger.debug("Sliced data for upcoming")
 
     # Build and return the pdf_data dict ready for rendering
     pdf_data = {
         "yesterday": yesterday_data,
         "today": today_data,
-        "upcoming": upcoming_data
+        "upcoming": upcoming_data,
     }
     logger.info("PDF data ready for rendering")
     return pdf_data
@@ -127,7 +134,7 @@ def get_pdf_data(target_date):
 
 if __name__ == "__main__":
     import json
+
     raw_events = get_latest_data(datetime.now(get_timezone()))
     with open("test_output.json", "w") as f:
         json.dump(raw_events, f, indent=2)
-

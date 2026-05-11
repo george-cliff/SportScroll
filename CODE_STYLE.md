@@ -228,6 +228,21 @@ The same applies to variables. `x` and `data` need comments to be useful. `recen
 
 ---
 
+## 5. Logging levels
+
+| Level | Python | When to use |
+| --- | --- | --- |
+| Trace | *(no native equivalent)* | Tracing one specific part of a function — granular enough that you'd only turn it on to hunt a single bug |
+| Debug | `logging.DEBUG` | Diagnostically helpful detail for admins and devs — not needed day-to-day but valuable when things go wrong |
+| Info | `logging.INFO` | Normal operation landmarks (start/stop, config loaded, cache hit). Always available, rarely acted on. **Default level.** |
+| Warn | `logging.WARNING` | Something odd happened but the app recovered automatically — retrying an operation, falling back to a secondary source, missing optional data |
+| Error | `logging.ERROR` | An operation failed and the user must intervene — missing required file, bad config, failed API auth. The app can keep running but this task is dead |
+| Fatal | `logging.CRITICAL` | Shutting down to prevent data loss or corruption. Reserve for the most severe failures only |
+
+Python has no native TRACE level. Use `DEBUG` with specific message text to cover it.
+
+---
+
 ## Quick checklist for each `.py` file
 
 When you open a file, can you tick all of these?

@@ -5,9 +5,10 @@ lifetime of the process.
 """
 
 # Standard library Imports
+import logging
 import os
 from functools import lru_cache
-from zoneinfo import ZoneInfo
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 
 # Related third party imports
@@ -22,6 +23,9 @@ ENV_FILE = ".env"
 
 load_dotenv(ENV_FILE)
 
+logger = logging.getLogger(__name__)
+
+
 @lru_cache(maxsize=1)
 def load_config():
     """Loads and returns the contents of config.yaml.
@@ -29,8 +33,15 @@ def load_config():
     Returns:
         A dict of the full config file contents.
     """
-    with open(CONFIG_FILE, "r") as f:
-        config = yaml.safe_load(f)
+    try:
+        with open(CONFIG_FILE, "r") as f:
+            config = yaml.safe_load(f)
+    except FileNotFoundError:
+        logger.exception("config.yaml not found - check it exists in the project root")
+        raise
+    except yaml.YAMLError:
+        logger.exception("config.yaml is malformed - check the syntax")
+        raise
     return config
 
 
@@ -41,7 +52,15 @@ def get_timezone():
     Returns:
         A ZoneInfo instance for the timezone string in config.yaml.
     """
-    return ZoneInfo(load_config()["timezone"])
+    try:
+        tz_name = load_config()["timezone"]
+        return ZoneInfo(tz_name)
+    except ZoneInfoNotFoundError:
+        logger.exception(f"Invalid timezone {tz_name!r} - check config.yaml")
+        raise
+    except KeyError:
+        logger.exception("Timezone key missing - check config.yaml")
+        raise
 
 
 def get_football_data_key():
@@ -63,7 +82,7 @@ def get_league_abbrs():
     abbrs = {}
     for _, leagues in load_config()["sports"].items():
         for code, league in leagues.items():
-            abbrs[league["name"]] = code            
+            abbrs[league["name"]] = code
     return abbrs
 
 
